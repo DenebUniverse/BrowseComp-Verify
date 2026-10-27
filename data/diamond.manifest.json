@@ -1,0 +1,18 @@
+{
+  "name": "DIAMOND",
+  "records": 207,
+  "true_labels": 103,
+  "false_labels": 104,
+  "source_file": "eval_result_diamond.jsonl",
+  "source_sha256": "185d08a69ac6826ffd70c879a3c2a47547666cbf4f6dcbc8ab31475681e2e8e0",
+  "output_sha256": "c7eb2ce590d13763d29a587436a3505c771f7fc42138f50dca8ccae37cc0b2e2",
+  "mapping": {
+    "question": "question",
+    "candidate_answer": "response",
+    "label": "correct",
+    "question_id": "id",
+    "answer": "answer"
+  },
+  "label_provenance": "Boolean correct fields preserved from the author-designated source file; labels are not recomputed.",
+  "text_encoding": "SHA256-keyed XOR plus Base64; reversible contamination deterrent"
+}

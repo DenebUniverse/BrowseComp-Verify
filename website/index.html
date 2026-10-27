@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="BrowseComp-Verify studies whether web search agents can derive their own verification criteria and reliably judge candidate answers.">
+  <meta name="theme-color" content="#f8f7f3">
+  <meta property="og:title" content="BrowseComp-Verify · Solving ≠ verifying">
+  <meta property="og:description" content="An interactive guide to self-derived verification in web search. EMNLP 2026.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://denebuniverse.github.io/BrowseComp-Verify/">
+  <link rel="alternate" hreflang="en" href="https://denebuniverse.github.io/BrowseComp-Verify/">
+  <link rel="alternate" hreflang="zh-CN" href="https://denebuniverse.github.io/BrowseComp-Verify/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://denebuniverse.github.io/BrowseComp-Verify/">
+  <link rel="canonical" href="https://denebuniverse.github.io/BrowseComp-Verify/">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/main.js" defer></script>
+  <title>BrowseComp-Verify · Solving ≠ verifying</title>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="topbar"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">B<span>✓</span></span> BrowseComp-Verify</a><nav aria-label="Resources"><a href="zh/" lang="zh-CN" aria-label="切换到中文版">中文</a><a href="https://aclanthology.org/2026.emnlp-main.1889/">Paper ↗</a><a href="https://github.com/DenebUniverse/BrowseComp-Verify">GitHub ↗</a></nav></header>
+<main id="content">
+  <div class="hero" id="top">
+    <p class="eyebrow">EMNLP 2026 · Main Conference</p>
+    <h1>BrowseComp-Verify</h1>
+    <p class="subtitle">Benchmarking Self-derived Verification Agents<br class="desktop-break"> in Web Search</p>
+    <p class="authors">Guanzhen Li <span>·</span> Shijie Li</p>
+    <div class="resource-links"><a class="primary" href="https://aclanthology.org/2026.emnlp-main.1889/">Read the paper <span>↗</span></a><a href="https://github.com/DenebUniverse/BrowseComp-Verify">Code &amp; DIAMOND ↗</a><a href="#citation">Cite</a></div>
+    <div class="hero-thesis"><span class="thesis-label">The central question</span><p>An agent can find an answer.<br>Can it reliably tell if an answer is right?</p><span class="thesis-formula">Solving <b>≠</b> verifying</span></div>
+    <p class="standfirst">Web search agents increasingly judge other agents’ answers. We study whether they can derive the criteria, retrieve evidence, and make a reliable judgment—without a gold answer or a predefined rubric.</p>
+  </div>
+  <div class="article-layout">
+    <aside><nav class="toc" aria-label="On this page"><span>IN THIS ARTICLE</span><a href="#motivation">01 · Solving ≠ verifying</a><a href="#task">02 · The task</a><a href="#results">03 · What agents get wrong</a><a href="#calibration">04 · A smaller gap?</a><a href="#implications">05 · What to take away</a><a href="#resources">Resources &amp; citation</a></nav></aside>
+    <article>
+      <section id="motivation">
+        <p class="section-label">01 / Motivation</p><h2>Search ability is only part of the story.</h2>
+        <p>Solving starts with a question. Verification starts with the <strong>same question plus a candidate answer</strong>. Knowing where to search helps with both, but judging a candidate also requires deciding which constraints matter and whether the evidence is sufficient.</p>
+        <figure class="figure-panel">
+          <div class="figure-top"><span class="figure-kicker">Solvers vs. verifiers</span><label>Highlight <select id="scatter-model"><option value="all">All models</option></select></label></div>
+          <div id="scatter" class="scatter-wrap"></div>
+          <p id="scatter-detail" class="chart-detail" aria-live="polite">Choose a model or select a point to inspect its two accuracies.</p>
+          <figcaption>Paper-reported solver–verifier figure. Each point is the same model in two roles, on the same 207 BrowseComp questions. Above the dashed line, verification is more accurate than solving. <a href="#result-sources">Source notes ↓</a></figcaption>
+          <details><summary>View the values</summary><div class="table-scroll" id="scatter-table"></div></details>
+        </figure>
+        <p class="takeaway"><span>Takeaway</span>Evaluate verification directly. Solver performance alone does not describe an agent’s ability to judge answers.</p>
+      </section>
+      <section id="task">
+        <p class="section-label">02 / The task</p><h2>Derive the test. Find the evidence. Make the call.</h2>
+        <p>In <strong>self-derived verification</strong>, the agent receives a question and a candidate answer. It has retrieval tools, but receives <strong>no gold answer, solver trajectory, or predefined rubric</strong>. It must work out what makes the candidate correct.</p>
+        <div class="task-flow"><div><span>01</span><h3>Derive</h3><p>Identify the question’s necessary constraints.</p></div><div><span>02</span><h3>Verify</h3><p>Search for evidence and check each constraint.</p></div><div><span>03</span><h3>Decide</h3><p>Accept or reject the candidate answer.</p></div></div>
+        <div class="dataset-strip"><div><strong>207</strong><span>DIAMOND tasks</span></div><div><strong>103</strong><span>correct candidates</span></div><div><strong>104</strong><span>incorrect candidates</span></div></div>
+        <p class="caption">The open-source release distributes DIAMOND with obfuscated text, following BrowseComp’s contamination precautions. Labels are used for evaluation; they are withheld from the verification agent.</p>
+        <div class="example-panel"><span class="figure-kicker">Walk through a synthetic example</span><p class="example-question">Which researcher both coauthored <em>Project Cedar</em> and received the <em>2024 Horizon Prize</em>?</p><p>Candidate answer: <strong>Alex Rowan</strong></p><div class="step-buttons" role="group" aria-label="Verification stages"><button data-step="0" aria-pressed="true">1. Derive</button><button data-step="1" aria-pressed="false">2. Retrieve</button><button data-step="2" aria-pressed="false">3. Decide</button></div><div id="example-step" aria-live="polite"></div><p class="caption">Illustrative only. Names, project, and award are invented; this is not a benchmark example or an actual agent trace.</p></div>
+      </section>
+      <section id="results">
+        <p class="section-label">03 / Main results</p><h2>Rejecting wrong answers is not enough.</h2>
+        <p>Many agents do much better at rejecting incorrect candidates than accepting correct ones. GPT-v5.2-Thinking-high, for example, scores <strong>99.04% on incorrect candidates</strong> but only <strong>20.39% on correct candidates</strong>. Its overall accuracy is 59.90%.</p>
+        <figure class="figure-panel">
+          <div class="figure-top"><span class="figure-kicker">Verification accuracy (%)</span><label>Order <select id="result-order"><option value="asc">Overall: low → high</option><option value="desc">Overall: high → low</option><option value="gap">Largest class gap first</option></select></label></div>
+          <div class="legend"><span class="correct">Correct candidate</span><span class="incorrect">Incorrect candidate</span><span class="overall">Overall</span></div>
+          <div id="main-chart"></div>
+          <figcaption>Reported main-table values for 11 agents. Budget: max. 100 agent turns per task. Invalid or unparsable verdicts count as incorrect. Correct-candidate accuracy measures acceptance; incorrect-candidate accuracy measures rejection. </figcaption>
+          <details><summary>View the full result table</summary><div class="table-scroll" id="main-table"></div></details>
+        </figure>
+        <p class="takeaway"><span>Takeaway</span>A verifier must recognize correct answers as well as reject incorrect ones. Always inspect both class accuracies alongside Overall.</p>
+      </section>
+      <section id="calibration">
+        <p class="section-label">04 / Prompt calibration</p><h2>A smaller gap is not the same as a better verifier.</h2>
+        <p>The strict prompt requires explicit support for every constraint; missing evidence leads to rejection. A relaxed prompt allows a more holistic judgment. This reduces rejection of correct answers, but also lets more incorrect answers through.</p>
+        <figure class="figure-panel">
+          <div class="figure-top"><span class="figure-kicker">Strict → relaxed</span><label>Model <select id="ablation-model"></select></label></div>
+          <div class="step-buttons" role="group" aria-label="Verification prompt"><button data-prompt="strict" aria-pressed="true">Strict</button><button data-prompt="relaxed" aria-pressed="false">Relaxed</button></div>
+          <div id="ablation-chart" aria-live="polite"></div><p id="ablation-insight" class="chart-detail"></p>
+          <figcaption>Δ is the absolute difference between the two class accuracies, in percentage points. This prompt ablation is reported separately from the main experiment.</figcaption>
+          <details><summary>Compare all strict and relaxed values</summary><div class="table-scroll" id="ablation-table"></div></details>
+        </figure>
+        <p class="takeaway"><span>Takeaway</span>Relaxing the prompt rebalances errors. Whether it improves verification must be checked against Overall accuracy.</p>
+      </section>
+      <section id="implications">
+        <p class="section-label">05 / Implications</p><h2>Reliable verification needs grounded judgment.</h2>
+        <p>Our audit of 100 failed cases assigns 135 error tags across seven categories. Retrieval and constraint-handling failures dominate: finding evidence is only useful if the agent interprets it faithfully against the question.</p>
+        <div class="insight-grid"><div><span class="small-index">01</span><h3>Missing evidence ≠ a false claim.</h3><p>Failure to retrieve support can make a strict verifier reject a correct candidate. Search coverage and the decision rule interact.</p></div><div><span class="small-index">02</span><h3>Meaning goes beyond wording.</h3><p>Literal matching can miss semantically equivalent evidence. Verification requires grounding constraints in what a source actually says.</p></div></div>
+        <h3 class="subheading">A human comparison needs matched cases.</h3>
+        <p>On the <strong>same 104 query–candidate pairs</strong>, Claude is numerically close to human experts. This is a separate subset experiment; it does not establish statistical equivalence.</p>
+        <div class="table-scroll"><table><caption>Matched-subset accuracy · 95% bootstrap CI (10,000 resamples)</caption><thead><tr><th scope="col">Evaluator</th><th scope="col">Accuracy</th><th scope="col">95% CI</th></tr></thead><tbody><tr><th scope="row">Human expert</th><td>94.23%</td><td>89.42–98.08</td></tr><tr><th scope="row">Claude-v4.6-Opus-high</th><td>91.35%</td><td>85.58–96.15</td></tr><tr><th scope="row">DeepSeek-v4-Pro-Preview-max</th><td>77.88%</td><td>69.23–85.58</td></tr><tr><th scope="row">DeepSeek-v4-Flash-Preview-max</th><td>76.92%</td><td>68.27–84.62</td></tr></tbody></table></div>
+        <p class="caption">These results evaluate complete verification agents, including their tool interfaces (harnesses). They should not be read as a comparison of language models in isolation. The study uses a fixed retrieval corpus, zero-shot prompts, and candidates from two models.</p>
+        <p class="closing">Build verifiers that can find evidence,<br><em>and know what that evidence supports.</em></p>
+      </section>
+      <section id="resources">
+        <p class="section-label">Explore &amp; reproduce</p><h2>Start with the paper. Try DIAMOND.</h2>
+        <div class="resource-row"><a href="https://aclanthology.org/2026.emnlp-main.1889/"><strong>Published paper ↗</strong><span>Full method, results, and appendices</span></a><a href="https://github.com/DenebUniverse/BrowseComp-Verify"><strong>Code &amp; DIAMOND ↗</strong><span>Agent harnesses, setup, and evaluation</span></a></div>
+        <details id="result-sources"><summary>Result sources and figure notes</summary><p>The main result chart transcribes Table 1. The scatter reproduces the paper-reported solver–verifier figure values; the calibration chart uses the separately reported prompt-ablation results. The human comparison uses the matched 104-case subset from the appendix. No new model evaluation is performed for this page.</p><p><a href="data/results.json">Download the displayed aggregate results (JSON)</a>. No benchmark question text, candidate answers, or trajectories are served by this website.</p></details>
+        <div id="citation" class="citation"><div class="figure-top"><h3>Citation</h3><button id="copy-citation" type="button">Copy BibTeX</button></div><pre id="bibtex">@inproceedings{li-li-2026-browsecomp,
+  title = {BrowseComp-Verify: Benchmarking Self-derived
+    Verification Agents in Web Search},
+  author = {Li, Guanzhen and Li, Shijie},
+  booktitle = {Proceedings of the 2026 Conference on
+    Empirical Methods in Natural Language Processing},
+  year = {2026},
+  pages = {43046--43075},
+  publisher = {Association for Computational Linguistics},
+  url = {https://aclanthology.org/2026.emnlp-main.1889/}
+}</pre><p id="copy-status" class="caption" aria-live="polite"></p></div>
+        <p class="credits">Built on <a href="https://openai.com/index/browsecomp/">BrowseComp</a> and <a href="https://github.com/texttron/BrowseComp-Plus">BrowseComp-Plus</a>, with agent implementation references from <a href="https://github.com/Hannibal046/GPT-OSS-BrowseCompPlus-Eval">GPT-OSS-BrowseCompPlus-Eval</a>.</p>
+      </section>
+      <footer>BrowseComp-Verify · Guanzhen Li &amp; Shijie Li · EMNLP 2026 <a href="#top">Back to top ↑</a></footer>
+    </article>
+  </div>
+</main>
+<noscript><p class="noscript">Interactive figures need JavaScript. The article remains readable; <a href="data/results.json">download the aggregate results</a> or read the linked paper for the tables.</p></noscript>
+</body>
+</html>

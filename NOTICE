@@ -1,0 +1,11 @@
+BrowseComp-Verify
+Copyright 2026 Guanzhen Li and Shijie Li.
+
+Original project contributions are offered under Apache-2.0.
+Third-party material retains its original notices and applicable terms.
+See THIRD_PARTY_NOTICES.md and third_party/ for attribution and license copies.
+
+This project uses BrowseComp questions, BrowseComp-Plus retrieval resources,
+OpenAI GPT-OSS browser interfaces, and research harness implementations
+referenced in THIRD_PARTY_NOTICES.md.
+

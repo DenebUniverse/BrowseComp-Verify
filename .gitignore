@@ -1,0 +1,39 @@
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# Python/build artifacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+# Local inference outputs and benchmark plaintext
+results/
+runs/
+logs/
+*.log
+*.lock
+data/local/
+data/*decrypted*
+data/*plaintext*
+# External corpus, indexes and weights
+external/
+indexes/
+models/
+*.parquet
+*.pkl
+*.safetensors
+*.bin
+*.jar
+# Editor/OS files
+.DS_Store
+.idea/
+.vscode/
+

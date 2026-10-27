@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="BrowseComp-Verify 研究网页搜索智能体能否自主推导验证标准，并可靠地判断候选答案。">
+  <meta name="theme-color" content="#f8f7f3">
+  <meta property="og:title" content="BrowseComp-Verify · 求解不等于验证">
+  <meta property="og:description" content="自主推导验证：网页搜索智能体能否可靠地判断候选答案？EMNLP 2026。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://denebuniverse.github.io/BrowseComp-Verify/zh/">
+  <link rel="alternate" hreflang="en" href="https://denebuniverse.github.io/BrowseComp-Verify/">
+  <link rel="alternate" hreflang="zh-CN" href="https://denebuniverse.github.io/BrowseComp-Verify/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://denebuniverse.github.io/BrowseComp-Verify/">
+  <link rel="canonical" href="https://denebuniverse.github.io/BrowseComp-Verify/zh/">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script src="../assets/main.js" defer></script>
+  <title>BrowseComp-Verify · 求解不等于验证</title>
+</head>
+<body>
+<a class="skip" href="#content">跳至正文</a>
+<header class="topbar"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">B<span>✓</span></span> BrowseComp-Verify</a><nav aria-label="Resources"><a href="../" lang="en" aria-label="Switch to English">English</a><a href="https://aclanthology.org/2026.emnlp-main.1889/">论文 ↗</a><a href="https://github.com/DenebUniverse/BrowseComp-Verify">GitHub ↗</a></nav></header>
+<main id="content">
+  <div class="hero" id="top">
+    <p class="eyebrow">EMNLP 2026 · 主会</p>
+    <h1>BrowseComp-Verify</h1>
+    <p class="subtitle">评测网页搜索中的<br class="desktop-break">自主推导验证智能体</p>
+    <p class="authors">Guanzhen Li <span>·</span> Shijie Li</p>
+    <div class="resource-links"><a class="primary" href="https://aclanthology.org/2026.emnlp-main.1889/">阅读论文 <span>↗</span></a><a href="https://github.com/DenebUniverse/BrowseComp-Verify">代码与 DIAMOND ↗</a><a href="#citation">引用</a></div>
+    <div class="hero-thesis"><span class="thesis-label">核心问题</span><p>智能体能找到答案。<br>它能可靠地判断答案是否正确吗？</p><span class="thesis-formula">求解 <b>≠</b> 验证</span></div>
+    <p class="standfirst">网页搜索智能体越来越多地承担评判其他智能体答案的任务。我们研究：在没有标准答案和预设评分规则时，它们能否自主推导标准、检索证据，并作出可靠判断。</p>
+  </div>
+  <div class="article-layout">
+    <aside><nav class="toc" aria-label="On this page"><span>本文导览</span><a href="#motivation">01 · 求解不等于验证</a><a href="#task">02 · 任务定义</a><a href="#results">03 · 智能体错在哪里</a><a href="#calibration">04 · 差距缩小就够了吗</a><a href="#implications">05 · 研究启示</a><a href="#resources">资源与引用</a></nav></aside>
+    <article>
+      <section id="motivation">
+        <p class="section-label">01 / 研究动机</p><h2>搜索能力只是其中一部分。</h2>
+        <p>求解的输入是问题；验证的输入则是<strong>同一个问题，加上一个候选答案</strong>。知道去哪里搜索，对两者都有帮助；但判断候选答案，还需要识别必要约束，并判断证据是否充分。</p>
+        <figure class="figure-panel">
+          <div class="figure-top"><span class="figure-kicker">求解与验证</span><label>高亮 <select id="scatter-model"><option value="all">全部模型</option></select></label></div>
+          <div id="scatter" class="scatter-wrap"></div>
+          <p id="scatter-detail" class="chart-detail" aria-live="polite">选择模型或点击图中的点，查看它在两种角色下的准确率。</p>
+          <figcaption>复现论文报告的求解–验证散点图。每个点对应同一模型在相同的 207 个 BrowseComp 问题上承担两种角色的表现。位于虚线上方，表示验证准确率高于求解准确率。 <a href="#result-sources">结果来源 ↓</a></figcaption>
+          <details><summary>查看数值表</summary><div class="table-scroll" id="scatter-table"></div></details>
+        </figure>
+        <p class="takeaway"><span>核心结论</span>验证能力需要单独评测。仅凭求解表现，无法判断智能体评判答案的能力。</p>
+      </section>
+      <section id="task">
+        <p class="section-label">02 / 任务定义</p><h2>推导标准，寻找证据，作出判断。</h2>
+        <p>在<strong>自主推导验证（self-derived verification）</strong>中，智能体接收一个问题和一个候选答案。它可以使用检索工具，但<strong>不会获得标准答案、求解轨迹或预设评分规则</strong>，必须自行确定候选答案应满足哪些条件。</p>
+        <div class="task-flow"><div><span>01</span><h3>推导</h3><p>提取问题中必须满足的约束。</p></div><div><span>02</span><h3>核验</h3><p>检索证据，逐项核验约束。</p></div><div><span>03</span><h3>判定</h3><p>接受或拒绝候选答案。</p></div></div>
+        <div class="dataset-strip"><div><strong>207</strong><span>DIAMOND 验证任务</span></div><div><strong>103</strong><span>正确候选</span></div><div><strong>104</strong><span>错误候选</span></div></div>
+        <p class="caption">开源版本沿用 BrowseComp 的文本混淆方式分发 DIAMOND，以减少评测污染。正确性标签仅用于评测，不提供给验证智能体。</p>
+        <div class="example-panel"><span class="figure-kicker">通过合成示例理解流程</span><p class="example-question">哪位研究者既参与撰写了 <em>Project Cedar</em>，又获得了 <em>2024 Horizon Prize</em>？</p><p>候选答案：<strong>Alex Rowan</strong></p><div class="step-buttons" role="group" aria-label="验证步骤"><button data-step="0" aria-pressed="true">1. 推导</button><button data-step="1" aria-pressed="false">2. 检索</button><button data-step="2" aria-pressed="false">3. 判定</button></div><div id="example-step" aria-live="polite"></div><p class="caption">仅作示意。人名、项目与奖项均为虚构，不是真实评测样本或智能体运行轨迹。</p></div>
+      </section>
+      <section id="results">
+        <p class="section-label">03 / 主要结果</p><h2>仅仅拒绝错误答案还不够。</h2>
+        <p>许多智能体更擅长拒绝错误候选，却容易误拒正确候选。例如，GPT-v5.2-Thinking-high 对<strong>错误候选的准确率为 99.04%</strong>，对<strong>正确候选却只有 20.39%</strong>，总体准确率为 59.90%。</p>
+        <figure class="figure-panel">
+          <div class="figure-top"><span class="figure-kicker">验证准确率（%）</span><label>排序 <select id="result-order"><option value="asc">总体准确率：低 → 高</option><option value="desc">总体准确率：高 → 低</option><option value="gap">类别差距：大 → 小</option></select></label></div>
+          <div class="legend"><span class="correct">正确候选</span><span class="incorrect">错误候选</span><span class="overall">总体</span></div>
+          <div id="main-chart"></div>
+          <figcaption>论文主表中 11 个智能体的报告值。预算：每项任务最多 100 个智能体轮次。无效或无法解析的判定计为错误。正确候选的准确率衡量是否正确接受；错误候选的准确率衡量是否正确拒绝。</figcaption>
+          <details><summary>查看完整结果表</summary><div class="table-scroll" id="main-table"></div></details>
+        </figure>
+        <p class="takeaway"><span>核心结论</span>验证智能体既要拒绝错误答案，也要认可正确答案。评估时，应同时关注两个类别的准确率和总体准确率。</p>
+      </section>
+      <section id="calibration">
+        <p class="section-label">04 / 提示词校准</p><h2>类别差距缩小，不等于验证能力提高。</h2>
+        <p>严格提示词要求每项约束都有明确证据支持，缺少证据就拒绝候选。宽松提示词允许更整体的判断。这能减少对正确答案的误拒，也可能放过更多错误答案。</p>
+        <figure class="figure-panel">
+          <div class="figure-top"><span class="figure-kicker">严格 → 宽松</span><label>模型 <select id="ablation-model"></select></label></div>
+          <div class="step-buttons" role="group" aria-label="验证提示词"><button data-prompt="strict" aria-pressed="true">严格</button><button data-prompt="relaxed" aria-pressed="false">宽松</button></div>
+          <div id="ablation-chart" aria-live="polite"></div><p id="ablation-insight" class="chart-detail"></p>
+          <figcaption>Δ 为两个类别准确率之差的绝对值，单位为百分点。该提示词消融实验独立于主实验报告。</figcaption>
+          <details><summary>查看所有严格与宽松提示词结果</summary><div class="table-scroll" id="ablation-table"></div></details>
+        </figure>
+        <p class="takeaway"><span>核心结论</span>放宽提示词会改变错误的分布。验证能力是否提高，还需要结合总体准确率判断。</p>
+      </section>
+      <section id="implications">
+        <p class="section-label">05 / 研究启示</p><h2>可靠的验证，需要以证据为依据作判断。</h2>
+        <p>我们分析了 100 个失败案例，标注了七类共 135 个错误标签，其中检索与约束处理问题占主导。找到证据还不够，智能体必须结合问题，忠实理解证据能够支持什么。</p>
+        <div class="insight-grid"><div><span class="small-index">01</span><h3>未找到证据 ≠ 陈述为假。</h3><p>没有检索到支持证据，可能导致严格验证器误拒正确候选。搜索覆盖范围与判定规则会共同影响结果。</p></div><div><span class="small-index">02</span><h3>语义不能只看字面。</h3><p>字面匹配可能忽略语义等价的证据。验证需要判断信息源的实际含义是否满足约束。</p></div></div>
+        <h3 class="subheading">与人类比较，必须使用相同样本。</h3>
+        <p>在<strong>完全相同的 104 个问题–候选答案对</strong>上，Claude 的准确率在数值上接近人类专家。这是独立的子集实验，不代表已经证明两者在统计上等价。</p>
+        <div class="table-scroll"><table><caption>同一子集准确率 · 95% Bootstrap 置信区间（10,000 次重采样）</caption><thead><tr><th scope="col">评估者</th><th scope="col">准确率</th><th scope="col">95% 置信区间</th></tr></thead><tbody><tr><th scope="row">人类专家</th><td>94.23%</td><td>89.42–98.08</td></tr><tr><th scope="row">Claude-v4.6-Opus-high</th><td>91.35%</td><td>85.58–96.15</td></tr><tr><th scope="row">DeepSeek-v4-Pro-Preview-max</th><td>77.88%</td><td>69.23–85.58</td></tr><tr><th scope="row">DeepSeek-v4-Flash-Preview-max</th><td>76.92%</td><td>68.27–84.62</td></tr></tbody></table></div>
+        <p class="caption">这些结果评测的是完整验证智能体，包括工具接口（harness），而非孤立比较语言模型。研究使用固定检索语料、零样本提示词，以及来自两个模型的候选答案。</p>
+        <p class="closing">让验证智能体既能找到证据，<br><em>也能判断证据究竟支持什么。</em></p>
+      </section>
+      <section id="resources">
+        <p class="section-label">深入阅读与复现</p><h2>阅读论文，尝试 DIAMOND。</h2>
+        <div class="resource-row"><a href="https://aclanthology.org/2026.emnlp-main.1889/"><strong>已发表论文 ↗</strong><span>完整方法、实验结果与附录</span></a><a href="https://github.com/DenebUniverse/BrowseComp-Verify"><strong>代码与 DIAMOND ↗</strong><span>智能体工具接口、环境配置与评测</span></a></div>
+        <details id="result-sources"><summary>结果来源与图表说明</summary><p>主结果图对应论文 Table 1；散点图复现论文报告的求解–验证图数值；提示词校准图对应独立报告的消融结果；人类比较使用附录中相同的 104 条样本。本页面未进行新的模型评测。</p><p><a href="../data/results.json">下载页面展示的汇总结果（JSON）</a>. 本网站不提供真实评测题目、候选答案或运行轨迹。</p></details>
+        <div id="citation" class="citation"><div class="figure-top"><h3>引用</h3><button id="copy-citation" type="button">复制 BibTeX</button></div><pre id="bibtex">@inproceedings{li-li-2026-browsecomp,
+  title = {BrowseComp-Verify: Benchmarking Self-derived
+    Verification Agents in Web Search},
+  author = {Li, Guanzhen and Li, Shijie},
+  booktitle = {Proceedings of the 2026 Conference on
+    Empirical Methods in Natural Language Processing},
+  year = {2026},
+  pages = {43046--43075},
+  publisher = {Association for Computational Linguistics},
+  url = {https://aclanthology.org/2026.emnlp-main.1889/}
+}</pre><p id="copy-status" class="caption" aria-live="polite"></p></div>
+        <p class="credits">基于 <a href="https://openai.com/index/browsecomp/">BrowseComp</a> 与 <a href="https://github.com/texttron/BrowseComp-Plus">BrowseComp-Plus</a> 构建，智能体实现也参考了 <a href="https://github.com/Hannibal046/GPT-OSS-BrowseCompPlus-Eval">GPT-OSS-BrowseCompPlus-Eval</a>.</p>
+      </section>
+      <footer>BrowseComp-Verify · Guanzhen Li &amp; Shijie Li · EMNLP 2026 <a href="#top">返回顶部 ↑</a></footer>
+    </article>
+  </div>
+</main>
+<noscript><p class="noscript">交互图表需要启用 JavaScript。正文仍可阅读；您也可以<a href="../data/results.json">下载汇总结果</a>，或阅读论文中的表格。</p></noscript>
+</body>
+</html>

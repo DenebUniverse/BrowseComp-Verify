@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use BrowseComp-Verify, please cite the published paper."
+title: "BrowseComp-Verify: Benchmarking Self-derived Verification Agents in Web Search"
+type: software
+authors:
+  - family-names: Li
+    given-names: Guanzhen
+  - family-names: Li
+    given-names: Shijie
+repository-code: "https://github.com/DenebUniverse/BrowseComp-Verify"
+url: "https://aclanthology.org/2026.emnlp-main.1889/"
+preferred-citation:
+  type: conference-paper
+  title: "BrowseComp-Verify: Benchmarking Self-derived Verification Agents in Web Search"
+  authors:
+    - family-names: Li
+      given-names: Guanzhen
+    - family-names: Li
+      given-names: Shijie
+  year: 2026
+  collection-title: "Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing"
+  start: 43046
+  end: 43075
+  url: "https://aclanthology.org/2026.emnlp-main.1889/"

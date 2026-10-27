@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "browsecomp-verify"
+version = "0.1.0"
+description = "Self-derived verification agents and the DIAMOND evaluation tasks"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+authors = [{name = "Guanzhen Li"}, {name = "Shijie Li"}]
+dependencies = []
+
+[project.optional-dependencies]
+agents = [
+  "openai>=1.97,<3", "requests>=2.31,<3", "aiohttp>=3.12,<4",
+  "openai-harmony", "gpt-oss==0.0.9", "tiktoken>=0.9,<1",
+  "filelock>=3.13,<4", "tqdm>=4.66,<5", "json-repair>=0.30,<1",
+  "json5>=0.9,<1", "transformers>=4.53,<5", "qwen-agent==0.0.26",
+]
+retrieval = ["duckdb>=1.1,<2", "fastapi>=0.115,<1", "uvicorn>=0.30,<1", "loguru>=0.7,<1", "pydantic>=2,<3", "tqdm>=4.66,<5"]
+bm25 = ["pyserini", "pyjnius"]
+dense = ["torch", "transformers>=4.53,<5", "numpy", "faiss-cpu", "peft"]
+solver-eval = ["openai>=1.97,<3", "tqdm>=4.66,<5", "prettytable>=3,<4"]
+
+[project.scripts]
+bcv-run = "browsecomp_verify.run:main"
+bcv-evaluate = "browsecomp_verify.evaluate:main"
+bcv-data = "browsecomp_verify.data:main"
+
+[project.urls]
+Paper = "https://aclanthology.org/2026.emnlp-main.1889/"
+Repository = "https://github.com/DenebUniverse/BrowseComp-Verify"
+
+[tool.setuptools.packages.find]
+include = ["browsecomp_verify*"]
+

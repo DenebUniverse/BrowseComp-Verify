@@ -1,0 +1,190 @@
+{
+  "paper_url": "https://aclanthology.org/2026.emnlp-main.1889/",
+  "units": "Accuracy in percent; gap in percentage points.",
+  "sources": {
+    "main": "Published main result table, Table 1. Values transcribed as reported.",
+    "ablation": "Separately reported prompt-ablation results. No new evaluation.",
+    "scatter": {
+      "notebook": "paper_release_marked.ipynb",
+      "cell_index": 38,
+      "description": "Paper-reported solver–verifier figure values, reproduced from the saved notebook summary. No new evaluation."
+    }
+  },
+  "main": [
+    {
+      "model": "GPT-OSS-20B-high",
+      "overall": 70.53,
+      "correct": 49.51,
+      "incorrect": 91.35
+    },
+    {
+      "model": "Tongyi-30B-A3B",
+      "overall": 34.7,
+      "correct": 22.96,
+      "incorrect": 48.45
+    },
+    {
+      "model": "Miro-v1.5-30B-A3B",
+      "overall": 59.42,
+      "correct": 32.04,
+      "incorrect": 86.54
+    },
+    {
+      "model": "GPT-OSS-120B-high",
+      "overall": 74.65,
+      "correct": 58.45,
+      "incorrect": 93.61
+    },
+    {
+      "model": "GLM-v4.7",
+      "overall": 55.07,
+      "correct": 12.62,
+      "incorrect": 97.12
+    },
+    {
+      "model": "Qwen-v3.5-397B",
+      "overall": 45.89,
+      "correct": 11.65,
+      "incorrect": 79.81
+    },
+    {
+      "model": "DeepSeek-v3.2",
+      "overall": 70.53,
+      "correct": 46.6,
+      "incorrect": 94.23
+    },
+    {
+      "model": "DeepSeek-v4-Flash-Preview-max",
+      "overall": 78.26,
+      "correct": 65.05,
+      "incorrect": 91.35
+    },
+    {
+      "model": "DeepSeek-v4-Pro-Preview-max",
+      "overall": 80.19,
+      "correct": 64.08,
+      "incorrect": 96.15
+    },
+    {
+      "model": "GPT-v5.2-Thinking-high",
+      "overall": 59.9,
+      "correct": 20.39,
+      "incorrect": 99.04
+    },
+    {
+      "model": "Claude-v4.6-Opus-high",
+      "overall": 92.75,
+      "correct": 89.32,
+      "incorrect": 96.15
+    }
+  ],
+  "ablation": [
+    {
+      "model": "GPT-OSS-20B",
+      "strict": {
+        "overall": 70.53,
+        "correct": 49.51,
+        "incorrect": 91.35,
+        "gap": 41.84
+      },
+      "relaxed": {
+        "overall": 69.57,
+        "correct": 56.31,
+        "incorrect": 82.69,
+        "gap": 26.37
+      }
+    },
+    {
+      "model": "GPT-OSS-120B",
+      "strict": {
+        "overall": 74.88,
+        "correct": 57.28,
+        "incorrect": 92.31,
+        "gap": 35.03
+      },
+      "relaxed": {
+        "overall": 69.5,
+        "correct": 69.92,
+        "incorrect": 69.08,
+        "gap": 0.84
+      }
+    },
+    {
+      "model": "GPT-v5.2-Thinking",
+      "strict": {
+        "overall": 59.9,
+        "correct": 20.39,
+        "incorrect": 99.04,
+        "gap": 78.65
+      },
+      "relaxed": {
+        "overall": 63.77,
+        "correct": 31.07,
+        "incorrect": 96.15,
+        "gap": 65.08
+      }
+    }
+  ],
+  "scatter": [
+    {
+      "id": "gptoss_120b_agent",
+      "model": "GPT-OSS-120B-HIGH",
+      "solver_accuracy": 49.76,
+      "verifier_accuracy": 74.88
+    },
+    {
+      "id": "tongyi_30b_agent",
+      "model": "Tongyi-30B-A3B",
+      "solver_accuracy": 36.23,
+      "verifier_accuracy": 32.85
+    },
+    {
+      "id": "miro_v1_5_30b_agent",
+      "model": "Miro-v1.5-30B-A3B",
+      "solver_accuracy": 27.05,
+      "verifier_accuracy": 59.42
+    },
+    {
+      "id": "glm_v4_7_358b_agent",
+      "model": "GLM-v4.7",
+      "solver_accuracy": 45.41,
+      "verifier_accuracy": 55.07
+    },
+    {
+      "id": "deepseek_v3_2_agent",
+      "model": "DeepSeek-v3.2",
+      "solver_accuracy": 65.22,
+      "verifier_accuracy": 70.53
+    },
+    {
+      "id": "gptoss_20b_agent",
+      "model": "GPT-OSS-20B-HIGH",
+      "solver_accuracy": 28.5,
+      "verifier_accuracy": 70.53
+    },
+    {
+      "id": "gpt_v5_2_agent",
+      "model": "GPT-v5.2-Thinking",
+      "solver_accuracy": 68.55,
+      "verifier_accuracy": 59.9
+    },
+    {
+      "id": "deepseek_v4_flash_max_agent",
+      "model": "DeepSeek-v4 Flash Max",
+      "solver_accuracy": 68.6,
+      "verifier_accuracy": 78.26
+    },
+    {
+      "id": "deepseek_v4_pro_max_agent",
+      "model": "DeepSeek-v4 Pro Max",
+      "solver_accuracy": 68.6,
+      "verifier_accuracy": 80.19
+    },
+    {
+      "id": "claude_v4_6_opus_high_agent",
+      "model": "Claude Opus 4.6",
+      "solver_accuracy": 75.85,
+      "verifier_accuracy": 92.75
+    }
+  ]
+}
